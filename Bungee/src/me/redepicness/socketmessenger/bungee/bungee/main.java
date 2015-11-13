@@ -1,4 +1,4 @@
-package me.redepicness.socketmanager;
+package me.redepicness.socketmessenger.bungee.bungee;
 
 import net.md_5.bungee.api.plugin.Plugin;
 

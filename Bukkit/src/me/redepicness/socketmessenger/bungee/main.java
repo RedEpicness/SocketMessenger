@@ -1,4 +1,4 @@
-package me.redepicness.socketmessenger;
+package me.redepicness.socketmessenger.bungee;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
