@@ -1,0 +1,4 @@
+name: SocketMessenger
+author: Red_Epicness
+version: 0.1
+main: me.redepicness.socketmessenger.bungee.main
