@@ -1,15 +1,12 @@
-package me.redepicness.socketmessenger.bukkit;
+package me.redepicness.socketmessenger.bungee;
 
 import me.redepicness.socketmessenger.Data;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import net.md_5.bungee.api.plugin.Event;
 
 /**
  * Called when Data is received on a specific channel trough the socket.
  */
 public class ReceivedDataEvent extends Event{
-
-    private static final HandlerList handlers = new HandlerList();
 
     private Data data;
     private String channel;
@@ -34,14 +31,6 @@ public class ReceivedDataEvent extends Event{
      */
     public String getChannel() {
         return channel;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
 }

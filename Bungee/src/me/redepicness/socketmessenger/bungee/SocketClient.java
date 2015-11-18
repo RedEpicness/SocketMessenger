@@ -3,7 +3,6 @@ package me.redepicness.socketmessenger.bungee;
 import me.redepicness.socketmessenger.Data;
 import me.redepicness.socketmessenger.bungee.SocketManager.Command;
 import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.config.ServerInfo;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -74,7 +73,7 @@ class SocketClient {
                         String channel = in.readUTF();
                         Data data = ((Data) in.readObject());
                         Util.log("Received data from "+fullName()+"! Channel: '"+channel+"'!");
-                        BungeeCord.getInstance().getPluginManager().callEvent(new RecievedDataEvent(data, channel));
+                        BungeeCord.getInstance().getPluginManager().callEvent(new ReceivedDataEvent(data, channel));
                         break;
                 }
             }

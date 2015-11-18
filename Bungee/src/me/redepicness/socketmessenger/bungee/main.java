@@ -20,7 +20,8 @@ public class main extends Plugin {
             if(!config.exists()){
                 config.createNewFile();
                 Configuration conf = ConfigurationProvider.getProvider(YamlConfiguration.class).load(config);
-                conf.set("port", 55555);ConfigurationProvider.getProvider(YamlConfiguration.class).save(conf, config);
+                conf.set("port", 55555);
+                ConfigurationProvider.getProvider(YamlConfiguration.class).save(conf, config);
                 port = 55555;
             }
             else{
