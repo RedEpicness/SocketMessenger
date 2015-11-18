@@ -3,6 +3,7 @@ package me.redepicness.socketmessenger.bungee;
 import me.redepicness.socketmessenger.Data;
 import me.redepicness.socketmessenger.bungee.SocketManager.Command;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.config.ServerInfo;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,6 +15,8 @@ class SocketClient {
     private Socket socket;
     private String name = "";
     private int id;
+    private int serverPort;
+    private boolean identified = false;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
@@ -30,8 +33,9 @@ class SocketClient {
     }
 
     private void dataReceiveListener(){
-        while(socket.isConnected()){
-            try {
+        try {
+            while(socket.isConnected()){
+                if(in.available() <= 0) continue;
                 Command command = Command.get(in.readByte());
                 switch(command){
                     case EXIT:
@@ -39,31 +43,43 @@ class SocketClient {
                         end();
                         break;
                     case IDENTIFY:
-                        name = in.readUTF();
-                        if(SocketManager.connectedSockets.containsKey(name)) name += "-"+id;
-                        Util.log("Socket "+id+" identified itself as "+name+"!");
+                        serverPort = in.readInt();
+                        BungeeCord.getInstance().getServers().values().stream()
+                                .filter(info -> info.getAddress().getPort() == serverPort)
+                                .forEach(info -> name = info.getName());
+                        if(name.equals("")){
+                            name = "Undefined";
+                            Util.log("Socked "+fullName()+" does not originate from any registered server! Disconnecting!");
+                            end();
+                            return;
+                        }
+                        Util.log("Socket "+id+"'s origin is '"+name+"'!");
+                        if(SocketManager.connectedSockets.containsKey(name)){
+                            Util.log("An open socket from "+name+" already exists! Disconnecting "+fullName()+"!");
+                            end();
+                            return;
+                        }
+                        identified = true;
                         SocketManager.connectedSockets.put(name, this);
                         sendCommand(Command.IDENTIFY);
                         break;
                     case BROADCAST:
+                        if(!identified) return;
                         String message = in.readUTF();
                         Util.log("Incoming broadcast from "+fullName()+"! '"+message+"'!");
                         BungeeCord.getInstance().broadcast(message);
                         break;
                     case SEND_DATA:
-                        try {
-                            String channel = in.readUTF();
-                            Data data = ((Data) in.readObject());
-                            Util.log("Recieved data from "+fullName()+"! Channel: '"+channel+"'!");
-                            BungeeCord.getInstance().getPluginManager().callEvent(new RecievedDataEvent(data, channel));
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
-                        }
+                        if(!identified) return;
+                        String channel = in.readUTF();
+                        Data data = ((Data) in.readObject());
+                        Util.log("Received data from "+fullName()+"! Channel: '"+channel+"'!");
+                        BungeeCord.getInstance().getPluginManager().callEvent(new RecievedDataEvent(data, channel));
                         break;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         if(!socket.isConnected()) end();
     }
@@ -71,19 +87,18 @@ class SocketClient {
     void end(){
         try {
             if(!socket.isClosed()) socket.close();
-            out.close();
-            in.close();
             SocketManager.connectedSockets.remove(name);
+            Util.log(fullName()+" closed!");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     void sendCommand(Command command, Object... data){
+        if(!identified) return;
         try {
             switch(command) {
                 case EXIT:
-                case IDENTIFY:
                     out.writeByte(command.getByte());
                     out.flush();
                     end();

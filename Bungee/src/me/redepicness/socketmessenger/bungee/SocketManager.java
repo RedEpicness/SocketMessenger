@@ -11,15 +11,15 @@ import java.util.concurrent.ExecutorService;
 class SocketManager {
 
     static HashMap<String, SocketClient> connectedSockets = new HashMap<>();
-    static int ID = 1;
+    static int ID = 0;
     private static ServerSocket serverSocket;
 
-    static void init(){
+    static void init(int port){
         try {
-            serverSocket = new ServerSocket(25555);
+            Util.log("Listening for socket connections on port "+port+"!");
+            serverSocket = new ServerSocket(port);
             ExecutorService service = BungeeCord.getInstance().getPluginManager().getPlugin("SocketMessenger").getExecutorService();
             service.submit(() -> {
-                //noinspection InfiniteLoopStatement
                 while(!serverSocket.isClosed()){
                     try {
                         Socket socket = serverSocket.accept();
@@ -44,9 +44,9 @@ class SocketManager {
     }
 
     private static void initSocket(Socket socket){
+        ID++;
         Util.log("Socket connected! ID: "+ID);
         new SocketClient(socket);
-        ID++;
     }
 
     enum Command{

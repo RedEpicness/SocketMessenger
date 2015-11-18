@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Inet4Address;
 import java.net.Socket;
 
@@ -14,12 +15,14 @@ class SocketManager {
     private static Socket socket;
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
+    private static int port = -1;
 
-    static void init(){
+    static void init(int p){
+        port = p;
         try {
-            Socket socket = new Socket(Inet4Address.getLocalHost(), 25555);
+            Util.log("Trying to connect on port "+port+"!");
+            Socket socket = new Socket(Inet4Address.getLocalHost(), port);
             Thread thread = new Thread(() -> {
-                System.out.println("thread started!");
                 initSocket(socket);
             });
             thread.start();
@@ -28,10 +31,21 @@ class SocketManager {
         }
     }
 
-    static void end(){
+    static void end(boolean shutdown){
         try {
             if(!socket.isClosed()) socket.close();
+            Util.log("Socket closed!");
+            if(!shutdown){
+                Util.log("Trying to reconnect in 5 seconds!");
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> {
+                    init(port);
+                });
+            }
         } catch (IOException e) {
+            if(e.getMessage().toLowerCase().contains("connection refused")){
+                Util.log("CANNOT CONNECT TO PORT "+port+"! CONNECTION REFUSED!");
+                return;
+            }
             e.printStackTrace();
         }
     }
@@ -39,24 +53,21 @@ class SocketManager {
     private static void initSocket(Socket s){
         try {
             socket = s;
-            System.out.println(socket.isClosed());
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            sendCommand(Command.IDENTIFY, "BukkitServer");
+            sendCommand(Command.IDENTIFY);
             while(!socket.isClosed()){
+                if(in.available() <= 0) continue;
                 Command command = Command.get(in.readByte());
                 switch(command){
                     case EXIT:
                         Util.log("Server sent end command!");
-                        end();
-                        break;
-                    case IDENTIFY:
-                        Util.log("Server acknowledged identification!");
+                        end(false);
                         break;
                     case SEND_DATA:
                             String channel = in.readUTF();
                             Data data = ((Data) in.readObject());
-                            Util.log("Recieved data from Server! Channel: '"+channel+"'!");
+                            Util.log("Received data from Server! Channel: '"+channel+"'!");
                             Bukkit.getPluginManager().callEvent(new ReceivedDataEvent(data, channel));
                         break;
                 }
@@ -72,17 +83,13 @@ class SocketManager {
                 case EXIT:
                     out.writeByte(command.getByte());
                     out.flush();
-                    end();
+                    end(false);
                     break;
                 case IDENTIFY:
-                    if(data.length < 1) throw new RuntimeException("Not enough data provided for SEND_DATA command!");
-                    if(!(data[0] instanceof String)) throw new RuntimeException("1st object for SEND_DATA is not of type String!");
-                    String name = ((String) data[0]);
-                    Util.log("Identifying to server as "+name+"!");
+                    Util.log("Identifying to server with port "+Bukkit.getPort()+"!");
                     out.writeByte(command.getByte());
-                    out.writeUTF(name);
+                    out.writeInt(Bukkit.getPort());
                     out.flush();
-                    end();
                     break;
                 case BROADCAST:
                     if(data.length < 1) throw new RuntimeException("Not enough data provided for SEND_DATA command!");
@@ -91,7 +98,6 @@ class SocketManager {
                     out.writeByte(command.getByte());
                     out.writeUTF(msg);
                     out.flush();
-                    end();
                     break;
                 case SEND_DATA:
                     if(data.length < 2) throw new RuntimeException("Not enough data provided for SEND_DATA command!");
