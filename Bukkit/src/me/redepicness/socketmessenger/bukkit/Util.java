@@ -4,9 +4,9 @@ import org.bukkit.Bukkit;
 
 import java.util.logging.Level;
 
-public class Util {
+class Util {
 
-    public static void log(String message){
+    static void log(String message){
         Bukkit.getLogger().log(Level.INFO, message);
     }
 

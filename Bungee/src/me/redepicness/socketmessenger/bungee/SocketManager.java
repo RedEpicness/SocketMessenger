@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 
 class SocketManager {
 
-    static HashMap<String, SocketClient> connectedSockets = new HashMap<>();
+    static final HashMap<String, SocketClient> connectedSockets = new HashMap<>();
     static int ID = 0;
     private static ServerSocket serverSocket;
 
@@ -18,6 +18,7 @@ class SocketManager {
         try {
             Util.log("Listening for socket connections on port "+port+"!");
             serverSocket = new ServerSocket(port);
+            @SuppressWarnings("deprecation")
             ExecutorService service = BungeeCord.getInstance().getPluginManager().getPlugin("SocketMessenger").getExecutorService();
             service.submit(() -> {
                 while(!serverSocket.isClosed()){

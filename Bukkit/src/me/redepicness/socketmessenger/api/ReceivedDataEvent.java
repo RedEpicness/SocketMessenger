@@ -10,8 +10,8 @@ public class ReceivedDataEvent extends Event{
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Data data;
-    private String channel;
+    private final Data data;
+    private final String channel;
 
     public ReceivedDataEvent(Data data, String channel) {
         this.data = data;

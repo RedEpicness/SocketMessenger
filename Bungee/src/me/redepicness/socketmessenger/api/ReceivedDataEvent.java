@@ -8,8 +8,8 @@ import net.md_5.bungee.api.plugin.Event;
  */
 public class ReceivedDataEvent extends Event{
 
-    private Data data;
-    private String channel;
+    private final Data data;
+    private final String channel;
 
     public ReceivedDataEvent(Data data, String channel) {
         this.data = data;

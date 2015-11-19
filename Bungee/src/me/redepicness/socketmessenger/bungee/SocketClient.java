@@ -12,9 +12,9 @@ import java.net.Socket;
 
 class SocketClient {
 
-    private Socket socket;
+    private final Socket socket;
     private String name = "";
-    private int id;
+    private final int id;
     private int serverPort;
     private boolean identified = false;
     private ObjectInputStream in;
@@ -94,7 +94,7 @@ class SocketClient {
         }
     }
 
-    void sendCommand(Command command, Object... data){
+    private void sendCommand(Command command, Object... data){
         if(!identified) return;
         try {
             switch(command) {

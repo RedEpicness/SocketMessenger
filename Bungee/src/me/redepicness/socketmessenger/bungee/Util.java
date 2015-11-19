@@ -4,9 +4,9 @@ import net.md_5.bungee.BungeeCord;
 
 import java.util.logging.Level;
 
-public class Util {
+class Util {
 
-    public static void log(String message){
+    static void log(String message){
         BungeeCord.getInstance().getLogger().log(Level.INFO, message);
     }
 

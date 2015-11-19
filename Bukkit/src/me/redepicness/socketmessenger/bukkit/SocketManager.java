@@ -37,9 +37,7 @@ class SocketManager {
             Util.log("Socket closed!");
             if(!shutdown){
                 Util.log("Trying to reconnect in 5 seconds!");
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> {
-                    init(port);
-                });
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> init(port));
             }
         } catch (IOException e) {
             if(e.getMessage().toLowerCase().contains("connection refused")){
@@ -77,7 +75,7 @@ class SocketManager {
         }
     }
 
-    static void sendCommand(Command command, Object... data){
+    private static void sendCommand(Command command, Object... data){
         try {
             switch(command) {
                 case EXIT:
@@ -92,8 +90,8 @@ class SocketManager {
                     out.flush();
                     break;
                 case BROADCAST:
-                    if(data.length < 1) throw new RuntimeException("Not enough data provided for SEND_DATA command!");
-                    if(!(data[0] instanceof String)) throw new RuntimeException("1st object for SEND_DATA is not of type String!");
+                    if(data.length < 1) throw new RuntimeException("Not enough data provided for BROADCAST command!");
+                    if(!(data[0] instanceof String)) throw new RuntimeException("1st object for BROADCAST is not of type String!");
                     String msg = ((String) data[0]);
                     out.writeByte(command.getByte());
                     out.writeUTF(msg);

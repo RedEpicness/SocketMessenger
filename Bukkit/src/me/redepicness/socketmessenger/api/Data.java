@@ -10,7 +10,7 @@ public class Data implements Serializable{
 
     private static final long serialVersionUID = 1;
 
-    private HashMap<String, DataObject> map = new HashMap<>();
+    private final HashMap<String, DataObject> map = new HashMap<>();
 
     /**
      * Adds a String to the map of objects to send.
@@ -222,8 +222,8 @@ public class Data implements Serializable{
 
     private class DataObject implements Serializable {
 
-        private DataType type;
-        private Object data;
+        private final DataType type;
+        private final Object data;
 
         private DataObject(DataType type, Object data) {
             this.type = type;
