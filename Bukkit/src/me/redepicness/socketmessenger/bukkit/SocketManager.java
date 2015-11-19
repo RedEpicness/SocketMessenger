@@ -28,6 +28,12 @@ class SocketManager {
             });
             thread.start();
         } catch (IOException e) {
+            if(e.getMessage().toLowerCase().contains("connection refused")){
+                Util.log("CANNOT CONNECT TO PORT "+port+"! CONNECTION REFUSED!");
+                Util.log("Trying to reconnect in 5 seconds!");
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> init(port), 5*20);
+                return;
+            }
             e.printStackTrace();
         }
     }
@@ -39,13 +45,9 @@ class SocketManager {
             Util.log("Socket closed!");
             if(!shutdown){
                 Util.log("Trying to reconnect in 5 seconds!");
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> init(port));
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> init(port), 5*20);
             }
         } catch (IOException e) {
-            if(e.getMessage().toLowerCase().contains("connection refused")){
-                Util.log("CANNOT CONNECT TO PORT "+port+"! CONNECTION REFUSED!");
-                return;
-            }
             e.printStackTrace();
         }
     }
@@ -55,8 +57,8 @@ class SocketManager {
             socket = s;
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            sendCommand(Command.IDENTIFY);
             valid = true;
+            sendCommand(Command.IDENTIFY);
             while(!socket.isClosed()){
                 if(in.available() <= 0) continue;
                 Command command = Command.get(in.readByte());

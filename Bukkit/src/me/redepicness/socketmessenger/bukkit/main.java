@@ -40,7 +40,7 @@ public class main extends JavaPlugin{
 
     @Override
     public void onDisable(){
-        SocketManager.end(true);
+        SocketManager.sendCommand(SocketManager.Command.EXIT);
     }
 
 }

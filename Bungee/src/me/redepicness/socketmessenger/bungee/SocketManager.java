@@ -5,6 +5,7 @@ import net.md_5.bungee.BungeeCord;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 
@@ -26,6 +27,7 @@ class SocketManager {
                         Socket socket = serverSocket.accept();
                         service.submit(() -> initSocket(socket));
                     } catch (IOException e) {
+                        if(e.getMessage().toLowerCase().contains("socket closed")) return;
                         e.printStackTrace();
                     }
                 }
@@ -38,7 +40,7 @@ class SocketManager {
     static void end(){
         try {
             if(!serverSocket.isClosed()) serverSocket.close();
-            connectedSockets.values().forEach(SocketClient::end);
+            connectedSockets.values().forEach(s -> s.sendCommand(Command.EXIT));
         } catch (IOException e) {
             e.printStackTrace();
         }

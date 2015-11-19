@@ -34,7 +34,7 @@ class SocketClient {
 
     private void dataReceiveListener(){
         try {
-            while(socket.isConnected()){
+            while(!socket.isClosed()){
                 if(in.available() <= 0) continue;
                 Command command = Command.get(in.readByte());
                 switch(command){
@@ -61,7 +61,6 @@ class SocketClient {
                         }
                         identified = true;
                         SocketManager.connectedSockets.put(name, this);
-                        sendCommand(Command.IDENTIFY);
                         break;
                     case BROADCAST:
                         if(!identified) return;
