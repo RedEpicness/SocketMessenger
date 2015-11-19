@@ -1,6 +1,6 @@
-package me.redepicness.socketmessenger.bungee;
+package me.redepicness.socketmessenger.api;
 
-import me.redepicness.socketmessenger.Data;
+import me.redepicness.socketmessenger.api.Data;
 import net.md_5.bungee.api.plugin.Event;
 
 /**

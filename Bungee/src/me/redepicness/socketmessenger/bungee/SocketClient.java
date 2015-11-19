@@ -1,6 +1,7 @@
 package me.redepicness.socketmessenger.bungee;
 
-import me.redepicness.socketmessenger.Data;
+import me.redepicness.socketmessenger.api.Data;
+import me.redepicness.socketmessenger.api.ReceivedDataEvent;
 import me.redepicness.socketmessenger.bungee.SocketManager.Command;
 import net.md_5.bungee.BungeeCord;
 

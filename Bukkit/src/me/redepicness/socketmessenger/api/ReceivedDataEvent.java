@@ -1,6 +1,5 @@
-package me.redepicness.socketmessenger.bukkit;
+package me.redepicness.socketmessenger.api;
 
-import me.redepicness.socketmessenger.Data;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

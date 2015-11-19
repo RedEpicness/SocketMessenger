@@ -1,4 +1,4 @@
-package me.redepicness.socketmessenger;
+package me.redepicness.socketmessenger.api;
 
 import java.io.Serializable;
 import java.util.HashMap;
