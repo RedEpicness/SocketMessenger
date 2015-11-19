@@ -74,7 +74,7 @@ class SocketClient {
                         String channel = in.readUTF();
                         Data data = ((Data) in.readObject());
                         Util.log("Received data from "+fullName()+"! Channel: '"+channel+"'!");
-                        BungeeCord.getInstance().getPluginManager().callEvent(new ReceivedDataEvent(data, channel));
+                        BungeeCord.getInstance().getPluginManager().callEvent(new ReceivedDataEvent(data, name, channel));
                         break;
                 }
             }
@@ -94,7 +94,7 @@ class SocketClient {
         }
     }
 
-    private void sendCommand(Command command, Object... data){
+    void sendCommand(Command command, Object... data){
         if(!identified) return;
         try {
             switch(command) {

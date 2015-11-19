@@ -1,6 +1,5 @@
 package me.redepicness.socketmessenger.api;
 
-import me.redepicness.socketmessenger.api.Data;
 import net.md_5.bungee.api.plugin.Event;
 
 /**
@@ -9,10 +8,12 @@ import net.md_5.bungee.api.plugin.Event;
 public class ReceivedDataEvent extends Event{
 
     private final Data data;
+    private final String sender;
     private final String channel;
 
-    public ReceivedDataEvent(Data data, String channel) {
+    public ReceivedDataEvent(Data data, String sender, String channel) {
         this.data = data;
+        this.sender = sender;
         this.channel = channel;
     }
 
@@ -27,10 +28,19 @@ public class ReceivedDataEvent extends Event{
 
     /**
      * Gets the channel trough which Data was received.
+     *
      * @return The channel which Data was received trough.
      */
     public String getChannel() {
         return channel;
     }
 
+    /**
+     * Gets the sender which sent the Data.
+     *
+     * @return The sender which sent the Data.
+     */
+    public String getSender() {
+        return sender;
+    }
 }

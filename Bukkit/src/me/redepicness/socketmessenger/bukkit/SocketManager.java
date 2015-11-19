@@ -13,6 +13,7 @@ import java.net.Socket;
 class SocketManager {
 
     private static Socket socket;
+    private static boolean valid = false;
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
     private static int port = -1;
@@ -34,6 +35,7 @@ class SocketManager {
     static void end(boolean shutdown){
         try {
             if(!socket.isClosed()) socket.close();
+            valid = false;
             Util.log("Socket closed!");
             if(!shutdown){
                 Util.log("Trying to reconnect in 5 seconds!");
@@ -54,6 +56,7 @@ class SocketManager {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
             sendCommand(Command.IDENTIFY);
+            valid = true;
             while(!socket.isClosed()){
                 if(in.available() <= 0) continue;
                 Command command = Command.get(in.readByte());
@@ -75,7 +78,8 @@ class SocketManager {
         }
     }
 
-    private static void sendCommand(Command command, Object... data){
+    static void sendCommand(Command command, Object... data){
+        if(!valid) return;
         try {
             switch(command) {
                 case EXIT:
