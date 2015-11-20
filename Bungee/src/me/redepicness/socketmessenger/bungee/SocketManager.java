@@ -54,7 +54,7 @@ class SocketManager {
 
     enum Command{
 
-        EXIT, IDENTIFY, BROADCAST, SEND_DATA;
+        EXIT, IDENTIFY, BROADCAST, SEND_DATA, FORWARD_DATA, CONNECT, PLAYER_COUNT, PLAYER_LIST, GET_SERVERS, MESSAGE, GET_SERVER, KICK_PLAYER;
 
         public static Command get(byte command){
             switch(command){
@@ -64,6 +64,22 @@ class SocketManager {
                     return BROADCAST;
                 case 2:
                     return SEND_DATA;
+                case 3:
+                    return FORWARD_DATA;
+                case 4:
+                    return CONNECT;
+                case 5:
+                    return PLAYER_COUNT;
+                case 6:
+                    return PLAYER_LIST;
+                case 7:
+                    return GET_SERVERS;
+                case 8:
+                    return MESSAGE;
+                case 9:
+                    return GET_SERVER;
+                case 10:
+                    return KICK_PLAYER;
                 case 127:
                     return IDENTIFY;
                 default:
@@ -81,6 +97,22 @@ class SocketManager {
                     return 1;
                 case SEND_DATA:
                     return 2;
+                case FORWARD_DATA:
+                    return 3;
+                case CONNECT:
+                    return 4;
+                case PLAYER_COUNT:
+                    return 5;
+                case PLAYER_LIST:
+                    return 6;
+                case GET_SERVERS:
+                    return 7;
+                case MESSAGE:
+                    return 8;
+                case GET_SERVER:
+                    return 9;
+                case KICK_PLAYER:
+                    return 10;
                 default:
                     throw new RuntimeException("invalid command enum!");
             }
