@@ -4,11 +4,14 @@ import me.redepicness.socketmessenger.api.Data;
 import me.redepicness.socketmessenger.api.ReceivedDataEvent;
 import me.redepicness.socketmessenger.bungee.SocketManager.Command;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 class SocketClient {
 
@@ -74,6 +77,56 @@ class SocketClient {
                         Data data = ((Data) in.readObject());
                         Util.log("Received data from "+fullName()+"! Channel: '"+channel+"'!");
                         BungeeCord.getInstance().getPluginManager().callEvent(new ReceivedDataEvent(data, name, channel));
+                        break;
+                    case FORWARD_DATA:
+                        String s = in.readUTF();
+                        Data d = ((Data) in.readObject());
+                        d.addString("ForwardSender", name);
+                        SocketClient client = SocketManager.connectedSockets.get(s);
+                        if(client == null) return;
+                        client.sendCommand(Command.SEND_DATA, "ForwardData", d);
+                        break;
+                    case CONNECT:
+                        String p = in.readUTF();
+                        String server = in.readUTF();
+                        if(BungeeCord.getInstance().getPlayer(p) == null) return;
+                        if(BungeeCord.getInstance().getServerInfo(server) == null) return;
+                        BungeeCord.getInstance().getPlayer(p).connect(BungeeCord.getInstance().getServerInfo(server));
+                        break;
+                    case PLAYER_COUNT:
+                        Data player_count = new Data();
+                        player_count.addInt("playerCount", BungeeCord.getInstance().getOnlineCount());
+                        sendCommand(Command.SEND_DATA, "PlayerCount", player_count);
+                        break;
+                    case PLAYER_LIST:
+                        Data players = new Data();
+                        ArrayList<String> playersList = BungeeCord.getInstance().getPlayers().stream()
+                                .map(ProxiedPlayer::getName).collect(Collectors.toCollection(ArrayList::new));
+                        players.addObject("playerList", playersList);
+                        sendCommand(Command.SEND_DATA, "PlayerList", players);
+                        break;
+                    case GET_SERVERS:
+                        Data servers = new Data();
+                        ArrayList<String> serversList = BungeeCord.getInstance().getServers().keySet().stream().collect(Collectors.toCollection(ArrayList::new));
+                        servers.addObject("serverList", serversList);
+                        sendCommand(Command.SEND_DATA, "ServerList", servers);
+                        break;
+                    case MESSAGE:
+                        String player = in.readUTF();
+                        String msg = in.readUTF();
+                        if(BungeeCord.getInstance().getPlayer(player) == null) return;
+                        BungeeCord.getInstance().getPlayer(player).sendMessage(msg);
+                        break;
+                    case GET_SERVER:
+                        Data server_name = new Data();
+                        server_name.addString("serverName", name);
+                        sendCommand(Command.SEND_DATA, "ServerName", server_name);
+                        break;
+                    case KICK_PLAYER:
+                        String pl = in.readUTF();
+                        String m = in.readUTF();
+                        if(BungeeCord.getInstance().getPlayer(pl) == null) return;
+                        BungeeCord.getInstance().getPlayer(pl).disconnect(m);
                         break;
                 }
             }

@@ -5,7 +5,6 @@ import net.md_5.bungee.BungeeCord;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 

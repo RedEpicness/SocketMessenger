@@ -114,6 +114,57 @@ class SocketManager {
                     out.writeObject(d);
                     out.flush();
                     break;
+                case FORWARD_DATA:
+                    if(data.length < 2) throw new RuntimeException("Not enough data provided for FORWARD_DATA command!");
+                    if(!(data[0] instanceof String)) throw new RuntimeException("1st object for FORWARD_DATA is not of type String!");
+                    if(!(data[1] instanceof Data)) throw new RuntimeException("2nd object for FORWARD_DATA is not of type Data!");
+                    String serv = ((String) data[0]);
+                    Data dat = ((Data) data[1]);
+                    out.writeByte(command.getByte());
+                    out.writeUTF(serv);
+                    out.writeObject(dat);
+                    out.flush();
+                    break;
+                case CONNECT:
+                    if(data.length < 1) throw new RuntimeException("Not enough data provided for CONNECT command!");
+                    if(!(data[0] instanceof String)) throw new RuntimeException("1st object for CONNECT is not of type String!");
+                    if(!(data[1] instanceof String)) throw new RuntimeException("2nd object for CONNECT is not of type String!");
+                    String p = ((String) data[0]);
+                    String server = ((String) data[1]);
+                    out.writeByte(command.getByte());
+                    out.writeUTF(p);
+                    out.writeUTF(server);
+                    out.flush();
+                    break;
+                case MESSAGE:
+                    if(data.length < 1) throw new RuntimeException("Not enough data provided for MESSAGE command!");
+                    if(!(data[0] instanceof String)) throw new RuntimeException("1st object for MESSAGE is not of type String!");
+                    if(!(data[1] instanceof String)) throw new RuntimeException("2nd object for MESSAGE is not of type String!");
+                    String pl = ((String) data[0]);
+                    String m = ((String) data[1]);
+                    out.writeByte(command.getByte());
+                    out.writeUTF(pl);
+                    out.writeUTF(m);
+                    out.flush();
+                    break;
+                case KICK_PLAYER:
+                    if(data.length < 1) throw new RuntimeException("Not enough data provided for KICK_PLAYER command!");
+                    if(!(data[0] instanceof String)) throw new RuntimeException("1st object for KICK_PLAYER is not of type String!");
+                    if(!(data[1] instanceof String)) throw new RuntimeException("2nd object for KICK_PLAYER is not of type String!");
+                    String player = ((String) data[0]);
+                    String message = ((String) data[1]);
+                    out.writeByte(command.getByte());
+                    out.writeUTF(player);
+                    out.writeUTF(message);
+                    out.flush();
+                    break;
+                case GET_SERVER:
+                case GET_SERVERS:
+                case PLAYER_COUNT:
+                case PLAYER_LIST:
+                    out.writeByte(command.getByte());
+                    out.flush();
+                    break;
                 default:
                     throw new RuntimeException("Unknown command!");
             }
