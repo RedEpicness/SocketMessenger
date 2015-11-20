@@ -17,12 +17,14 @@ class SocketManager {
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
     private static int port = -1;
+    private static String address = "localhost";
 
-    static void init(int p){
+    static void init(String a, int p){
+        address = a;
         port = p;
         try {
             Util.log("Trying to connect on port "+port+"!");
-            Socket socket = new Socket(Inet4Address.getLocalHost(), port);
+            Socket socket = new Socket(Inet4Address.getByName(address), port);
             Thread thread = new Thread(() -> {
                 initSocket(socket);
             });
@@ -31,7 +33,7 @@ class SocketManager {
             if(e.getMessage().toLowerCase().contains("connection refused")){
                 Util.log("CANNOT CONNECT TO PORT "+port+"! CONNECTION REFUSED!");
                 Util.log("Trying to reconnect in 5 seconds!");
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> init(port), 5*20);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> init(address, port), 5*20);
                 return;
             }
             e.printStackTrace();
@@ -45,7 +47,7 @@ class SocketManager {
             Util.log("Socket closed!");
             if(!shutdown){
                 Util.log("Trying to reconnect in 5 seconds!");
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> init(port), 5*20);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("SocketMessenger"), () -> init(address, port), 5*20);
             }
         } catch (IOException e) {
             e.printStackTrace();

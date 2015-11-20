@@ -11,6 +11,7 @@ public class main extends JavaPlugin{
     @Override
     public void onEnable() {
         int port = -1;
+        String address = "localhost";
         try {
             if(!getDataFolder().exists()) {
                 if(!getDataFolder().mkdir()){
@@ -25,16 +26,18 @@ public class main extends JavaPlugin{
                 }
                 YamlConfiguration conf = YamlConfiguration.loadConfiguration(config);
                 conf.set("port", 55555);
+                conf.set("address", "localhost");
                 conf.save(config);
                 port = 55555;
             }
             else{
                 port = YamlConfiguration.loadConfiguration(config).getInt("port");
+                address = YamlConfiguration.loadConfiguration(config).getString("address");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        SocketManager.init(port);
+        SocketManager.init(address, port);
     }
 
     @Override
