@@ -16,6 +16,8 @@ The plugin uses sockets to send data, which adds more features over the default 
 
 Check how to [install, configure and use the plugin here](https://github.com/RedEpicness/SocketMessenger/wiki).
 
+**If You have any problems or suggestions, contact me via the spigot forums!**
+
 ## Coming Soon:
 - Tutorial
 - Code examples
