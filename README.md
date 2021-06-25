@@ -1,7 +1,7 @@
 # Socket Messenger
 Minecraft plugin for Bukkit/Spigot - BungeeCord communication trough sockets.
 
-## I HAVE ABANDONED THIS PROJECT FOR NOW, IN FAVOR OF https://github.com/RedEpicness/redismsg AS IT IS OFFERS MORE FLEXIBILITY WITH REDIS OVER THE RAW SOCKET, IF I GET MORE REQUESTS TO UPDATE THIS, I WILL RETURN TO IT.
+## I HAVE ABANDONED THIS PROJECT FOR NOW, IN FAVOR OF https://github.com/RedEpicness/redis-messenger AS IT IS OFFERS MORE FLEXIBILITY WITH REDIS OVER THE RAW SOCKET, IF I GET MORE REQUESTS TO UPDATE THIS, I WILL RETURN TO IT.
 
 #### The plugin is currently in alpha stage. Still needs testing to find out bugs.
 
